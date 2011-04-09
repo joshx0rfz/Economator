@@ -58,10 +58,10 @@
 (defun rnd-flt () (* (random 1000) 0.001))
 
 ;; Constants
-(defconst hunt-max-food 7)
-(defconst food-new-age 14)
-(defconst skin-num-used 10)
-(defconst skin-new-age 28)
+(defconst hunt-max-food  7)
+(defconst food-new-age   14)
+(defconst skin-num-used  10)
+(defconst skin-new-age   28)
 (defconst beads-init-max 20)
 (defconst price-init-max 10)
 
@@ -70,19 +70,31 @@
 ; The village is a list of huts. We'll add to it later.
 (defvar the-village ())
 
+; The food market is a list of offers.
+(defvar the-food-market (make-list food-new-age))
+
+; The skin market is also a list of offers.
+(defvar the-skin-market ())
+
+; A hut offers food of some age at a price
+(defun offer-skins (price hut num)
+  (nconc the-skin-market (list price hut num)))
+
+(defun offer-food (price age hut num)
+
+
 ;;; A hut is a simple list
 ;;; For now, we're defining a hut to have a type, either
 ;;; hunter or trapper.
 (defun make-hut (type) 
-  (list ('type . type)
-	('food . (make-list food-new-age 0))
-	('food-sell-price . (1+ (random price-init-max)))
-	('food-buy-price . (1+ (random price-init-max)))
-	('skins . (make-list skin-num-used 0))
-	('skins-extra . 0)
-	('skins-margin . (* (rnd-flt) skin-margin-max)
-	('beads . (1+ (random beads-init-max)))
-	))
+  `((type . ,type)
+    (food . ,(make-list food-new-age :initial-element 0))
+    (food-sell-price . ,(1+ (random price-init-max)))
+    (food-buy-price . ,(1+ (random price-init-max)))
+    (skins . ,(make-list skin-num-used :initial-element 0))
+    (skins-extra . 0)
+    (skins-margin . ,(* (rnd-flt) skin-margin-max)
+		  (beads . (1+ (random beads-init-max))))))
 
 ;;; At sunset, food is eaten and spoils, and skins become worn out
 (defun hut-sundown (hut)
@@ -98,7 +110,7 @@
     ; And throw out the oldest food (front of the list)
     (setcdr food (cddr food))
     ; Apply wear and tear to skins
-    (set-when '>0 '1- skins)
+    (set-when '>0 '1- skins)))
 
 ;;; At noon, skins are replaced, and food and skins are put on the market
 (defun hut-noon (hut)
@@ -113,8 +125,8 @@
        ; Attempt to replace worn out skins
        (set-when '=0 'skin-replace skins)
        ; Put food and skins on the market.
-
-
+       
+       ))
 
 (defun hut-hunt (hut)
 
@@ -126,6 +138,7 @@
 
 (defun hut-hungry? (hut)
 
+)
 ; 
 (defun hut-choose-action (hut)
 
